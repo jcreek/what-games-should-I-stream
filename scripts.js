@@ -9,111 +9,24 @@ async function getTopGamesAsync(){
     // See https://dev.twitch.tv/docs/api/reference/#get-top-games
 
     // List to hold the top games, to be returned by the function
-    var tempList = []; 
+    var tempGamesList = []; 
     var requestUrlBase = 'https://api.twitch.tv/helix/games/top?first=100';
 
-    var request1 = new Request(requestUrlBase, {headers: new Headers({'Client-ID': clientID})});
-    let response1 = await fetch(request1);
-    let data1 = await response1.json();
-    // Get the cursor 
-    let cursor1 = await data1.pagination.cursor;
-    // Get each game from the returned JSON data and add it to the list
-    data1.data.forEach(game => {
-        tempList.push(game);
-    });
+    var gamesRequest,gamesResponse,gamesData,gamesCursor;
 
-    var request2 = new Request(requestUrlBase + '&after=' + cursor1, {headers: new Headers({'Client-ID': clientID})});
-    let response2 = await fetch(request2);
-    let data2 = await response2.json();
-    // Get the cursor 
-    let cursor2 = await data1.pagination.cursor;
-    // Get each game from the returned JSON data and add it to the list
-    data2.data.forEach(game => {
-        tempList.push(game);
-    });
+    for (gamesCounter = 0; gamesCounter < 10; gamesCounter++) {
+        gamesRequest = new Request(requestUrlBase + (gamesCursor != undefined ? '&after=' + gamesCursor : ''), {headers: new Headers({'Client-ID': clientID})});
+        gamesResponse = await fetch(gamesRequest);
+        gamesData = await gamesResponse.json();
+        // Get the cursor 
+        gamesCursor = await gamesData.pagination.cursor;
+        // Get each game from the returned JSON data and add it to the list
+        gamesData.data.forEach(game => {
+            tempGamesList.push(game);
+        });
+    }
 
-    var request3 = new Request(requestUrlBase + '&after=' + cursor1, {headers: new Headers({'Client-ID': clientID})});
-    let response3 = await fetch(request3);
-    let data3 = await response3.json();
-    // Get the cursor 
-    let cursor3 = await data2.pagination.cursor;
-    // Get each game from the returned JSON data and add it to the list
-    data3.data.forEach(game => {
-        tempList.push(game);
-    });
-
-    var request4 = new Request(requestUrlBase + '&after=' + cursor1, {headers: new Headers({'Client-ID': clientID})});
-    let response4 = await fetch(request4);
-    let data4 = await response4.json();
-    // Get the cursor 
-    let cursor4 = await data3.pagination.cursor;
-    // Get each game from the returned JSON data and add it to the list
-    data4.data.forEach(game => {
-        tempList.push(game);
-    });
-
-    var request5 = new Request(requestUrlBase + '&after=' + cursor1, {headers: new Headers({'Client-ID': clientID})});
-    let response5 = await fetch(request5);
-    let data5 = await response5.json();
-    // Get the cursor 
-    let cursor5 = await data4.pagination.cursor;
-    // Get each game from the returned JSON data and add it to the list
-    data5.data.forEach(game => {
-        tempList.push(game);
-    });
-
-    var request6 = new Request(requestUrlBase + '&after=' + cursor1, {headers: new Headers({'Client-ID': clientID})});
-    let response6 = await fetch(request6);
-    let data6 = await response6.json();
-    // Get the cursor 
-    let cursor6 = await data5.pagination.cursor;
-    // Get each game from the returned JSON data and add it to the list
-    data6.data.forEach(game => {
-        tempList.push(game);
-    });
-
-    var request7 = new Request(requestUrlBase + '&after=' + cursor1, {headers: new Headers({'Client-ID': clientID})});
-    let response7 = await fetch(request7);
-    let data7 = await response7.json();
-    // Get the cursor 
-    let cursor7 = await data6.pagination.cursor;
-    // Get each game from the returned JSON data and add it to the list
-    data7.data.forEach(game => {
-        tempList.push(game);
-    });
-
-    var request8 = new Request(requestUrlBase + '&after=' + cursor1, {headers: new Headers({'Client-ID': clientID})});
-    let response8 = await fetch(request8);
-    let data8 = await response8.json();
-    // Get the cursor 
-    let cursor8 = await data7.pagination.cursor;
-    // Get each game from the returned JSON data and add it to the list
-    data8.data.forEach(game => {
-        tempList.push(game);
-    });
-
-    var request9 = new Request(requestUrlBase + '&after=' + cursor1, {headers: new Headers({'Client-ID': clientID})});
-    let response9 = await fetch(request9);
-    let data9 = await response9.json();
-    // Get the cursor 
-    let cursor9 = await data8.pagination.cursor;
-    // Get each game from the returned JSON data and add it to the list
-    data9.data.forEach(game => {
-        tempList.push(game);
-    });
-
-    var request10 = new Request(requestUrlBase + '&after=' + cursor1, {headers: new Headers({'Client-ID': clientID})});
-    let response10 = await fetch(request10);
-    let data10 = await response10.json();
-    // Get the cursor 
-    let cursor10 = await data9.pagination.cursor;
-    // Get each game from the returned JSON data and add it to the list
-    data10.data.forEach(game => {
-        tempList.push(game);
-    });
-
-
-    return tempList;
+    return tempGamesList;
 }
 
 async function getTopStreamsAsync(){
@@ -121,38 +34,24 @@ async function getTopStreamsAsync(){
     // See https://dev.twitch.tv/docs/api/reference/#get-streams
 
     // List to hold the top streams, to be returned by the function
-    var tempList = []; 
+    var tempStreamsList = []; 
     var requestUrlBase = 'https://api.twitch.tv/helix/streams?first=100';
 
-    // var request1 = new Request(requestUrlBase, {headers: new Headers({'Client-ID': clientID})});
-    // let response1 = await fetch(request1);
-    // let data1 = await response1.json();
-    // // Get the cursor 
-    // let cursor1 = await data1.pagination.cursor;
-    // // Get each stream from the returned JSON data and add it to the list
-    // data1.data.forEach(stream => {
-    //     tempList.push(stream);
-    // });
+    var streamsRequest,streamsResponse,streamsData,streamsCursor;
 
-    var request,response,data,cursor;
-
-    for (i = 0; i < 10; i++) {
-        request = new Request(requestUrlBase + (cursor != undefined ? '&after=' + cursor : ''), {headers: new Headers({'Client-ID': clientID})});
-        response = await fetch(request);
-        data = await response.json();
+    for (streamsCounter = 0; streamsCounter < 10; streamsCounter++) {
+        streamsRequest = new Request(requestUrlBase + (streamsCursor != undefined ? '&after=' + streamsCursor : ''), {headers: new Headers({'Client-ID': clientID})});
+        streamsResponse = await fetch(streamsRequest);
+        streamsData = await streamsResponse.json();
         // Get the cursor 
-        cursor = await data.pagination.cursor;
+        streamsCursor = await streamsData.pagination.cursor;
         // Get each stream from the returned JSON data and add it to the list
-        data.data.forEach(stream => {
-            tempList.push(stream);
+        streamsData.data.forEach(stream => {
+            tempStreamsList.push(stream);
         });
     }
 
-
-
-
-
-    return tempList;
+    return tempStreamsList;
 }
 
 
