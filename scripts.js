@@ -1,8 +1,7 @@
 const app = document.getElementById('root');
 
 var clientID = 'xxxxxx'; // Hide this for github, it's my application's Client ID
-var topGames = []; // Holds roughly the top thousand games by viewers, although the viewer count per game is unavailable for some reason but this can be calculated by totalling the viewers from all streams for a particular game, if necessary
-var topStreams = []; // Need to get a lot more of these to get useful data, and compare using the game ids where they match the top games - N.B. will need to remove/ignore any duplicate streams as between pages the data can change as viewers leave and join streams
+var streamDataSet = [];
 
 async function getTopGamesAsync(){
     console.log('--> getTopGamesAsync');
@@ -54,15 +53,34 @@ async function getTopStreamsAsync(){
     return tempStreamsList;
 }
 
+async function consolidateDataSet() {
+    // Get back a list of the most popular games by number of viewers
+    // Holds roughly the top thousand games by viewers, although the viewer count per game is unavailable for some reason but this can be calculated by totalling the viewers from all streams for a particular game, if necessary
+    let topGames = await getTopGamesAsync();
+
+    // Get back a list of the most popular steams by number of viewers
+    // Need to get a lot more of these to get useful data, and compare using the game ids where they match the top games - N.B. will need to remove/ignore any duplicate streams as between pages the data can change as viewers leave and join streams
+    let topStreams = await getTopStreamsAsync();
+
+
+    // For each game in topGames, get each stream with the same gameId 
+    topGames.forEach(function(game) {
+        game.streams = topStreams.filter(stream => {
+            return stream.game_id === game.id;
+          })
+    });
+
+    return topGames;
+}
 
 
 
+consolidateDataSet().then((result) => {
+    console.log('--> streamDataSet is ready for analysis');
+    streamDataSet = result;
+    console.log(streamDataSet);
+});
 
-
-// Get back a list of the most popular games by number of viewers
-topGames = getTopGamesAsync();
-
-topStreams = getTopStreamsAsync();
 
 
 
