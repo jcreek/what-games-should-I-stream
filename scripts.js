@@ -2,6 +2,7 @@ const app = document.getElementById('root');
 
 var clientID = 'xxxxxx'; // Hide this for github, it's my application's Client ID
 var streamDataSet = [];
+var finalData = [];
 
 async function getTopGamesAsync(){
     console.log('--> getTopGamesAsync');
@@ -73,43 +74,49 @@ async function consolidateDataSet() {
     return topGames;
 }
 
+function displayData() {
+    // Display logic 
+    const appContainer = document.createElement('div');
+    appContainer.setAttribute('class', 'appContainer');
+
+    app.appendChild(appContainer);
+
+    finalData = streamDataSet.slice(0,21); // Set to first 21 for testing purposes 
+
+    finalData.forEach(game => {
+        const card = document.createElement('div');
+        card.setAttribute('class', 'card');
+
+        const img = document.createElement('img');
+        img.setAttribute('style', 'width:100%');
+        img.src = game.box_art_url.replace('{width}', '376').replace('{height}', '500');
+
+        const container = document.createElement('div');
+        container.setAttribute('class', 'container');
+
+        const h4 = document.createElement('h4');
+        h4.textContent = game.name;
+
+        // Show number of viewers for game, number of streamers and average number of viewers per streamer
+        const p = document.createElement('p');
+        p.textContent = 'Info here';
+
+        appContainer.appendChild(card);
+        card.appendChild(img);
+        card.appendChild(container);
+        container.appendChild(h4);
+        container.appendChild(p);
+    })
+}
+
+
 
 
 consolidateDataSet().then((result) => {
     console.log('--> streamDataSet is ready for analysis');
     streamDataSet = result;
     console.log(streamDataSet);
+}).then(() => {
+    document.getElementsByClassName('spinner')[0].style.display = 'none';
+    displayData();
 });
-
-
-
-
-
-
-
-
-
-// Display logic 
-const container = document.createElement('div');
-container.setAttribute('class', 'container');
-
-app.appendChild(container);
-
-
-
-// finalData.forEach(game => {
-//     const card = document.createElement('div');
-//     card.setAttribute('class', 'card');
-
-//     const h1 = document.createElement('h1');
-//     h1.textContent = game.name;
-//     // use game.box_art_url to get the image for each game
-
-//     // Show number of viewers for game, number of streamers and average number of viewers per streamer
-//     const p = document.createElement('p');
-//     p.textContent = '';
-
-//     container.appendChild(card);
-//     card.appendChild(h1);
-//     card.appendChild(p);
-// })
