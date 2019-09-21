@@ -99,7 +99,7 @@ function displayData() {
 
     // Sort the dataset by the game scores we calculated
     var orderedStreamDataSet = streamDataSet.sort(function (a, b) {
-        return a.score - b.score;
+        return b.score - a.score;
     })
 
     finalData = orderedStreamDataSet.slice(0,21); // Set to first 21 for testing purposes 
