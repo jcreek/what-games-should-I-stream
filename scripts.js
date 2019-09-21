@@ -39,7 +39,8 @@ async function getTopStreamsAsync(){
 
     var streamsRequest,streamsResponse,streamsData,streamsCursor;
 
-    for (streamsCounter = 0; streamsCounter < 10; streamsCounter++) {
+    for (streamsCounter = 0; streamsCounter < 100; streamsCounter++) {
+        console.log('    ==> on loop ' + streamsCounter + ' of 100');
         streamsRequest = new Request(requestUrlBase + (streamsCursor != undefined ? '&after=' + streamsCursor : ''), {headers: new Headers({'Client-ID': clientID})});
         streamsResponse = await fetch(streamsRequest);
         streamsData = await streamsResponse.json();
@@ -69,6 +70,21 @@ async function consolidateDataSet() {
         game.streams = topStreams.filter(stream => {
             return stream.game_id === game.id;
           })
+        game.numStreams = game.streams.length;
+
+        var tempViewerCount = 0;
+        game.streams.forEach(function(stream) {
+            tempViewerCount += stream.viewer_count;
+        })
+        game.numViewers = tempViewerCount;
+
+        // Calculate weighting 
+        var numStreamersToFavour = 10;
+        var weighting =  Math.exp(0 - game.numStreams);
+
+        // Calculate score 
+        var ratio = game.numViewers / game.numStreams;
+        game.score = ratio * weighting;
     });
 
     return topGames;
@@ -81,7 +97,12 @@ function displayData() {
 
     app.appendChild(appContainer);
 
-    finalData = streamDataSet.slice(0,21); // Set to first 21 for testing purposes 
+    // Sort the dataset by the game scores we calculated
+    var orderedStreamDataSet = streamDataSet.sort(function (a, b) {
+        return a.score - b.score;
+    })
+
+    finalData = orderedStreamDataSet.slice(0,21); // Set to first 21 for testing purposes 
 
     finalData.forEach(game => {
         const card = document.createElement('div');
@@ -98,14 +119,30 @@ function displayData() {
         h4.textContent = game.name;
 
         // Show number of viewers for game, number of streamers and average number of viewers per streamer
-        const p = document.createElement('p');
-        p.textContent = 'Info here';
+        const ul = document.createElement('ul');
+        const li1 = document.createElement('li');
+        const li2 = document.createElement('li');
+        const li3 = document.createElement('li');
+        const li4 = document.createElement('li');
+
+        li1.textContent = 'Score: ' + game.score;
+        li2.textContent = 'Number of streams: ' + game.numStreams;
+        li3.textContent = 'Number of viewers: ' + game.numViewers;
+        li4.textContent = 'Mean average viewers per stream: ' + (game.numViewers /game.numStreams);
+
+        // const p = document.createElement('p');
+        // p.textContent = '';
 
         appContainer.appendChild(card);
         card.appendChild(img);
         card.appendChild(container);
         container.appendChild(h4);
-        container.appendChild(p);
+        container.appendChild(ul);
+        ul.appendChild(li1);
+        ul.appendChild(li2);
+        ul.appendChild(li3);
+        ul.appendChild(li4);
+        // container.appendChild(p);
     })
 }
 
