@@ -80,7 +80,7 @@ async function consolidateDataSet() {
 
         // Calculate weighting 
         var numStreamersToFavour = 10;
-        var weighting =  Math.exp(0 - game.numStreams);
+        var weighting =  ( (numStreamersToFavour * game.numStreams) / ( (game.numStreams - numStreamersToFavour)^2 + 10) );
 
         // Calculate score 
         var ratio = game.numViewers / game.numStreams;
@@ -102,7 +102,7 @@ function displayData() {
         return b.score - a.score;
     })
 
-    finalData = orderedStreamDataSet.slice(0,21); // Set to first 21 for testing purposes 
+    finalData = orderedStreamDataSet.slice(0,54); // Set to first 21 for testing purposes 
 
     finalData.forEach(game => {
         const card = document.createElement('div');
